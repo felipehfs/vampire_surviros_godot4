@@ -6,6 +6,7 @@ var movement_speed = 40.0
 @export var hp = 80
 var maxhp = 80
 var last_movement = Vector2.UP
+var time = 0
 
 var experience = 0
 var experience_level = 1
@@ -21,6 +22,7 @@ var javelin = preload("res://Scenes/Attack/javelin.tscn")
 @onready var tornadoTimer : Timer = get_node("%TornadoTimer")
 @onready var tornadoAttackTimer : Timer = get_node("%TornadoAttackTimer")
 @onready var javelinBase = get_node("%JavelinBase")
+@onready var healthBar = get_node("%HealthBar")
 
 # Upgrades
 var collected_upgrades = []
@@ -57,11 +59,16 @@ var enemy_close = []
 @onready var upgradeOptions: VBoxContainer = get_node("%UpgradeOptions")
 @onready var sound_level_up: AudioStreamPlayer2D = get_node("%SoundLevelUp")
 @onready var itemOptions  = preload("res://Utilities/item_option.tscn")
+@onready var labelTimer: Label = get_node("%LabelTimer")
+@onready var collectedWeapons: GridContainer = get_node("%CollectedWeapons")
+@onready var collectedUpgrades: GridContainer = get_node("%CollectedUpgrades")
+@onready var itemContainer = preload("res://Scenes/GUI/item_container.tscn")
 
 func _ready():
-	upgrade_character("javelin1")
+	upgrade_character("icespear1")
 	attack()
 	set_expbar(experience, calculate_experiencecap())
+	_on_hurt_box_hurt(0, 0, 0)
 
 func attack():
 	if icespear_level > 0:
@@ -101,7 +108,8 @@ func movement():
 	
 func _on_hurt_box_hurt(damage, _angle, _knockback):
 	hp -= clamp(damage - armor, 1.0, 999.0)
-	print(hp)
+	healthBar.max_value = maxhp
+	healthBar.value = hp
 
 func _on_ice_spear_timer_timeout():
 	icespear_ammo += icespear_baseammo + additional_attacks
@@ -271,7 +279,8 @@ func upgrade_character(upgrade):
 		"food":
 			hp += 20
 			hp = clamp(hp,0,maxhp)
-			
+	
+	adjust_gui_collect(upgrade)
 	attack()
 	var option_children = upgradeOptions.get_children()
 	for i in option_children:
@@ -307,3 +316,29 @@ func get_random_item():
 		return randomitem
 	else:
 		return null
+
+func change_time(argtime = 0):
+	time = argtime
+	var minutes = int(time/ 60.0)
+	var seconds = time % 60
+	if minutes < 10:
+		minutes = str(0, minutes)
+	if seconds < 10:
+		seconds = str(0, seconds)
+	labelTimer.text = str(minutes, ":", seconds)
+
+func adjust_gui_collect(upgrade):
+	var upgraded_displayname = UpgradeDb.UPGRADES[upgrade]["displayname"]
+	var get_type = UpgradeDb.UPGRADES[upgrade]["type"]
+	if get_type != "item":
+		var get_collected_displaynames = []
+		for i in collected_upgrades:
+			get_collected_displaynames.append(UpgradeDb.UPGRADES[i]["displayname"])
+		if not upgraded_displayname in get_collected_displaynames:
+			var new_item = itemContainer.instantiate()
+			new_item.upgrade = upgrade
+			match get_type:
+				"weapon":
+					collectedWeapons.add_child(new_item)
+				"upgrade":
+					collectedUpgrades.add_child(new_item)

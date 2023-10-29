@@ -11,16 +11,16 @@ script = ExtResource("5_rda5y")
 time_start = 0
 time_end = 5
 enemy = ExtResource("4_j1qqr")
-enemy_num = 1
-enemy_spawn_delay = 0
+enemy_num = 6
+enemy_spawn_delay = 3
 
 [sub_resource type="Resource" id="Resource_mybfj"]
 script = ExtResource("5_rda5y")
 time_start = 5
 time_end = 60
 enemy = ExtResource("4_j1qqr")
-enemy_num = 3
-enemy_spawn_delay = 0
+enemy_num = 5
+enemy_spawn_delay = 2
 
 [node name="World" type="Node2D"]
 

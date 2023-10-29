@@ -5,6 +5,11 @@ extends Node2D
 
 var time = 0
 
+signal changeTime(time)
+
+func _ready():
+	connect("changeTime", Callable(player, "change_time"))
+
 func _on_timer_timeout():
 	time += 1
 	var enemy_spaws = spawns
@@ -21,6 +26,7 @@ func _on_timer_timeout():
 					enemy_spawn.global_position = get_random_position()
 					add_child(enemy_spawn)
 					counter += 1
+	emit_signal("changeTime", time)
 
 func get_random_position():
 	var vpr = get_viewport_rect().size * randf_range(1.1, 1.4)
