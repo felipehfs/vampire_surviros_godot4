@@ -64,6 +64,14 @@ var enemy_close = []
 @onready var collectedUpgrades: GridContainer = get_node("%CollectedUpgrades")
 @onready var itemContainer = preload("res://Scenes/GUI/item_container.tscn")
 
+@onready var deathPanel : Panel = get_node("%DeathPanel")
+@onready var labelResult: Label = get_node("%Label_result")
+@onready var sound_victory: AudioStreamPlayer2D = get_node("%SoundVictory")
+@onready var sound_loose: AudioStreamPlayer2D = get_node("%SoundLoose")
+
+# signal
+signal playerDeath
+
 func _ready():
 	upgrade_character("icespear1")
 	attack()
@@ -110,6 +118,8 @@ func _on_hurt_box_hurt(damage, _angle, _knockback):
 	hp -= clamp(damage - armor, 1.0, 999.0)
 	healthBar.max_value = maxhp
 	healthBar.value = hp
+	if hp <= 0:
+		death()
 
 func _on_ice_spear_timer_timeout():
 	icespear_ammo += icespear_baseammo + additional_attacks
@@ -342,3 +352,22 @@ func adjust_gui_collect(upgrade):
 					collectedWeapons.add_child(new_item)
 				"upgrade":
 					collectedUpgrades.add_child(new_item)
+
+func death():
+	deathPanel.visible = true
+	emit_signal("playerDeath")
+	get_tree().paused = true
+	var tween = deathPanel.create_tween()
+	tween.tween_property(deathPanel, "position", Vector2(220, 50), 3.0).set_trans(Tween.TRANS_QUINT).set_ease(Tween.EASE_OUT)
+	tween.play()
+	if time >= 300:
+		labelResult.text = "You win"
+		sound_victory.play()
+	else:
+		labelResult.text = "You loose"
+		sound_loose.play()
+
+
+func _on_button_menu_click_end():
+	get_tree().paused = false
+	var _level = get_tree().change_scene_to_file("res://Scenes/title_screen.tscn")

@@ -1,26 +1,88 @@
-[gd_scene load_steps=8 format=3 uid="uid://cwguiwwa03kkf"]
+[gd_scene load_steps=21 format=3 uid="uid://cwguiwwa03kkf"]
 
 [ext_resource type="Texture2D" uid="uid://bi2v8xknaae34" path="res://Textures/dirt_full_new.png" id="1_qdyae"]
 [ext_resource type="PackedScene" uid="uid://d1aqn6od0spvt" path="res://Scenes/player.tscn" id="2_nkj6p"]
 [ext_resource type="PackedScene" uid="uid://ddnfhvlfstqjh" path="res://Utilities/enemy_spawn.tscn" id="3_yjfa1"]
-[ext_resource type="PackedScene" uid="uid://binuibqullsre" path="res://Scenes/enemy.tscn" id="4_j1qqr"]
-[ext_resource type="Script" path="res://Utilities/spawn_info.gd" id="5_rda5y"]
+[ext_resource type="PackedScene" uid="uid://binuibqullsre" path="res://Scenes/enemy_kobold_weak.tscn" id="4_etuhc"]
+[ext_resource type="Script" path="res://Utilities/spawn_info.gd" id="5_d5two"]
+[ext_resource type="PackedScene" uid="uid://b6t62gumfdstg" path="res://Scenes/enemy_kobold_strong.tscn" id="6_oj1bn"]
+[ext_resource type="PackedScene" uid="uid://dfh3whntlg0wh" path="res://Scenes/enemy_cyclops.tscn" id="7_r717g"]
+[ext_resource type="PackedScene" uid="uid://b75028bfclo2w" path="res://Scenes/enemy_juggernaut.tscn" id="8_tfr50"]
+[ext_resource type="PackedScene" uid="uid://dqasoma4q2dfx" path="res://Scenes/enemy_super.tscn" id="9_uoic2"]
+[ext_resource type="AudioStream" uid="uid://b2wptan12100a" path="res://Audio/Music/battleThemeA.mp3" id="10_tnxal"]
+[ext_resource type="Script" path="res://Scenes/sound_music.gd" id="11_q651a"]
 
-[sub_resource type="Resource" id="Resource_axhwx"]
-script = ExtResource("5_rda5y")
+[sub_resource type="Resource" id="Resource_oh0lb"]
+script = ExtResource("5_d5two")
 time_start = 0
-time_end = 5
-enemy = ExtResource("4_j1qqr")
-enemy_num = 6
-enemy_spawn_delay = 3
+time_end = 30
+enemy = ExtResource("4_etuhc")
+enemy_num = 1
+enemy_spawn_delay = 0
 
-[sub_resource type="Resource" id="Resource_mybfj"]
-script = ExtResource("5_rda5y")
-time_start = 5
-time_end = 60
-enemy = ExtResource("4_j1qqr")
-enemy_num = 5
+[sub_resource type="Resource" id="Resource_ifdc7"]
+script = ExtResource("5_d5two")
+time_start = 30
+time_end = 210
+enemy = ExtResource("4_etuhc")
+enemy_num = 2
+enemy_spawn_delay = 0
+
+[sub_resource type="Resource" id="Resource_jej5d"]
+script = ExtResource("5_d5two")
+time_start = 60
+time_end = 180
+enemy = ExtResource("6_oj1bn")
+enemy_num = 1
+enemy_spawn_delay = 1
+
+[sub_resource type="Resource" id="Resource_rtmua"]
+script = ExtResource("5_d5two")
+time_start = 180
+time_end = 210
+enemy = ExtResource("7_r717g")
+enemy_num = 1
 enemy_spawn_delay = 2
+
+[sub_resource type="Resource" id="Resource_fhlpv"]
+script = ExtResource("5_d5two")
+time_start = 210
+time_end = 240
+enemy = ExtResource("6_oj1bn")
+enemy_num = 2
+enemy_spawn_delay = 0
+
+[sub_resource type="Resource" id="Resource_ism0e"]
+script = ExtResource("5_d5two")
+time_start = 240
+time_end = 270
+enemy = ExtResource("7_r717g")
+enemy_num = 1
+enemy_spawn_delay = 0
+
+[sub_resource type="Resource" id="Resource_ns0ed"]
+script = ExtResource("5_d5two")
+time_start = 240
+time_end = 240
+enemy = ExtResource("8_tfr50")
+enemy_num = 1
+enemy_spawn_delay = 0
+
+[sub_resource type="Resource" id="Resource_77bfp"]
+script = ExtResource("5_d5two")
+time_start = 270
+time_end = 380
+enemy = ExtResource("6_oj1bn")
+enemy_num = 4
+enemy_spawn_delay = 0
+
+[sub_resource type="Resource" id="Resource_1cgdy"]
+script = ExtResource("5_d5two")
+time_start = 300
+time_end = 300
+enemy = ExtResource("9_uoic2")
+enemy_num = 1
+enemy_spawn_delay = 0
 
 [node name="World" type="Node2D"]
 
@@ -35,6 +97,15 @@ region_rect = Rect2(-4000, -4000, 4000, 4000)
 position = Vector2(218, 141)
 
 [node name="EnemySpawn" parent="." instance=ExtResource("3_yjfa1")]
-spawns = Array[ExtResource("5_rda5y")]([SubResource("Resource_axhwx"), SubResource("Resource_mybfj")])
+spawns = Array[ExtResource("5_d5two")]([SubResource("Resource_oh0lb"), SubResource("Resource_ifdc7"), SubResource("Resource_jej5d"), SubResource("Resource_rtmua"), SubResource("Resource_fhlpv"), SubResource("Resource_ism0e"), SubResource("Resource_ns0ed"), SubResource("Resource_77bfp"), SubResource("Resource_1cgdy")])
 
 [node name="Loot" type="Node2D" parent="." groups=["loot"]]
+
+[node name="sound_music" type="AudioStreamPlayer2D" parent="."]
+process_mode = 3
+stream = ExtResource("10_tnxal")
+volume_db = -15.0
+autoplay = true
+script = ExtResource("11_q651a")
+
+[connection signal="playerDeath" from="Player" to="sound_music" method="_on_player_player_death"]

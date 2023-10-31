@@ -22,7 +22,7 @@ var spr_jav_atk = preload("res://Textures/Items/Weapons/javelin_3_new_attack.png
 @onready var sprite = $Sprite2D
 @onready var collision = $CollisionShape2D
 @onready var attackTimer: Timer = get_node("%AttackTimer")
-@onready var changeTimer: Timer = get_node("%ChangeTimer")
+
 @onready var changeDirectionTimer: Timer = get_node("%ChangeDirection")
 @onready var resetPosTimer: Timer = get_node("%ResetPosTimer")
 @onready var sound_attack = $SoundAttack

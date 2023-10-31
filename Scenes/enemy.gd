@@ -1,19 +1,26 @@
 extends CharacterBody2D
 
 @export var movement_speed = 20.0
-var hp = 10
+@export var enemy_damage = 1
+@export var knockback_recovery = 1.5
+@export var experience = 1
+@export var hp = 10
+
 @onready var player = get_tree().get_first_node_in_group("player")
 @onready var loot_base = get_tree().get_first_node_in_group("loot")
-@export var knockback_recovery = 1.5
 @onready var sound_hit = $SoundHit
 @onready var sprite = $Sprite2D
-@onready var experience = 1
+@onready var hitBox = $Hitbox
+@onready var anim = $AnimationPlayer
 
 var knockback = Vector2.ZERO
 var death_animation = preload("res://Scenes/explosion.tscn")
 var exp_gem = preload("res://Objects/experience_gem.tscn")
 
 signal remove_from_array(object)
+
+func _ready():
+	hitBox.damage = enemy_damage
 
 func _physics_process(_delta):
 	knockback = knockback.move_toward(Vector2.ZERO, knockback_recovery)
@@ -52,3 +59,10 @@ func _on_hurt_box_hurt(damage, angle, knowback_amount):
 		death()
 	else:
 		sound_hit.play()
+
+
+func _on_visible_on_screen_enabler_2d_screen_entered():
+	sprite.visible = true
+
+func _on_visible_on_screen_enabler_2d_screen_exited():
+	sprite.visible = false
